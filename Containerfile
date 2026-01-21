@@ -23,7 +23,6 @@ RUN dnf5 install -y \
     --exclude=seahorse \
     --exclude=transmission \
     --exclude=fros-recordmydesktop \
-    --exclude=tumbler \
     --exclude=NetworkManager-fortisslvpn-gnome \
     --exclude=NetworkManager-iodine-gnome \
     --exclude=NetworkManager-l2tp-gnome \
