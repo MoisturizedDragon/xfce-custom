@@ -1,40 +1,48 @@
-# Allow build scripts to be referenced without being copied into the final image
 FROM scratch AS ctx
 COPY build_files /
 
-# Base Image
-FROM ghcr.io/ublue-os/bazzite:stable
+FROM ghcr.io/ublue-os/base-main:latest
 
-## Other possible base images include:
-# FROM ghcr.io/ublue-os/bazzite:latest
-# FROM ghcr.io/ublue-os/bluefin-nvidia:stable
-# 
-# ... and so on, here are more base images
-# Universal Blue Images: https://github.com/orgs/ublue-os/packages
-# Fedora base image: quay.io/fedora/fedora-bootc:41
-# CentOS base images: quay.io/centos-bootc/centos-bootc:stream10
+RUN dnf5 install -y \
+    @xfce-desktop \
+    @xfce-apps \
+    @xfce-extra-plugins \
+    fedora-release-xfce \
+    lightdm \
+    lightdm-gtk \
+    gnome-keyring-pam \
+    xdg-desktop-portal-gtk \
+    xclip \
+    --exclude=abrt-desktop \
+    --exclude=dnfdragora-updater \
+    --exclude=claws-mail \
+    --exclude='claws-mail-plugins-*' \
+    --exclude=catfish \
+    --exclude=geany \
+    --exclude=pidgin \
+    --exclude=seahorse \
+    --exclude=transmission \
+    --exclude=fros-recordmydesktop \
+    --exclude=tumbler \
+    --exclude=NetworkManager-fortisslvpn-gnome \
+    --exclude=NetworkManager-iodine-gnome \
+    --exclude=NetworkManager-l2tp-gnome \
+    --exclude=NetworkManager-libreswan-gnome \
+    --exclude=NetworkManager-sstp-gnome \
+    --exclude=NetworkManager-strongswan-gnome \
+    --exclude=alsa-utils \
+    --exclude=firewall-config \
+    --exclude=openssh-askpass \
+    --exclude=vim-enhanced \
+    && dnf5 clean all
 
-### [IM]MUTABLE /opt
-## Some bootable images, like Fedora, have /opt symlinked to /var/opt, in order to
-## make it mutable/writable for users. However, some packages write files to this directory,
-## thus its contents might be wiped out when bootc deploys an image, making it troublesome for
-## some packages. Eg, google-chrome, docker-desktop.
-##
-## Uncomment the following line if one desires to make /opt immutable and be able to be used
-## by the package manager.
-
-# RUN rm /opt && mkdir /opt
-
-### MODIFICATIONS
-## make modifications desired in your image and install packages by modifying the build.sh script
-## the following RUN directive does all the things required to run "build.sh" as recommended.
+RUN systemctl enable lightdm && \
+    systemctl set-default graphical.target
 
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
     --mount=type=tmpfs,dst=/tmp \
     /ctx/build.sh
-    
-### LINTING
-## Verify final image and contents are correct.
+
 RUN bootc container lint
