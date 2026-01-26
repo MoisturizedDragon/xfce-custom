@@ -4,6 +4,7 @@ COPY build_files /
 FROM ghcr.io/ublue-os/base-main:latest
 
 RUN dnf5 install -y \
+    @base-x \
     @xfce-desktop \
     @xfce-apps \
     @xfce-extra-plugins \
