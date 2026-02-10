@@ -2,7 +2,7 @@ FROM scratch AS ctx
 COPY build_files /
 COPY cosign.pub /cosign.pub
 
-FROM quay.io/fedora/fedora-bootc:42
+FROM quay.io/fedora/fedora-bootc:43
 
 # Remove server/cloud packages not needed for desktop
 RUN dnf5 remove -y \
