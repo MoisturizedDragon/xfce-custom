@@ -1,8 +1,32 @@
 FROM scratch AS ctx
 COPY build_files /
+COPY cosign.pub /cosign.pub
 
-FROM ghcr.io/ublue-os/base-main:latest
+FROM quay.io/fedora/fedora-bootc:42
 
+# Remove server/cloud packages not needed for desktop
+RUN dnf5 remove -y \
+    WALinuxAgent-udev \
+    NetworkManager-cloud-setup \
+    stalld \
+    sg3_utils \
+    kexec-tools \
+    makedumpfile \
+    kdump-utils \
+    console-login-helper-messages-issuegen \
+    console-login-helper-messages-profile \
+    sssd-client \
+    sssd-ad \
+    sssd-ipa \
+    sssd-krb5 \
+    sssd-ldap \
+    libsss_sudo \
+    sos \
+    python3-rpm \
+    iptables-services \
+    && dnf5 clean all
+
+# Install XFCE desktop environment and desktop essentials
 RUN dnf5 install -y \
     @base-x \
     @xfce-desktop \
@@ -14,6 +38,7 @@ RUN dnf5 install -y \
     gnome-keyring-pam \
     xdg-desktop-portal-gtk \
     xclip \
+    firewalld \
     --exclude=abrt-desktop \
     --exclude=dnfdragora-updater \
     --exclude=claws-mail \
@@ -31,12 +56,14 @@ RUN dnf5 install -y \
     --exclude=NetworkManager-sstp-gnome \
     --exclude=NetworkManager-strongswan-gnome \
     --exclude=alsa-utils \
-    --exclude=firewall-config \
     --exclude=openssh-askpass \
     --exclude=vim-enhanced \
     && dnf5 clean all
 
+# Enable desktop services, disable SSH server
 RUN systemctl enable lightdm && \
+    systemctl enable firewalld && \
+    systemctl disable sshd.service && \
     systemctl set-default graphical.target
 
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \

@@ -5,12 +5,7 @@ set -ouex pipefail
 ### Install packages
 
 # Packages can be installed from any enabled yum repo on the image.
-# RPMfusion repos are available by default in ublue main images
-# List of rpmfusion packages can be found here:
-# https://mirrors.rpmfusion.org/mirrorlist?path=free/fedora/updates/43/x86_64/repoview/index.html&protocol=https&redirect=1
-
-# this installs a package from fedora repos
-dnf5 install -y tmux 
+dnf5 install -y tmux
 
 # Use a COPR Example:
 #
@@ -19,6 +14,15 @@ dnf5 install -y tmux
 # Disable COPRs so they don't end up enabled on the final image:
 # dnf5 -y copr disable ublue-os/staging
 
-#### Example for enabling a System Unit File
+#### Enable System Services
 
 systemctl enable podman.socket
+
+#### Container image signature verification
+
+# Install cosign public key
+install -Dm0644 /ctx/signing/policy.json /etc/containers/policy.json
+install -Dm0644 /ctx/signing/registries.d/xfce-custom.yaml /etc/containers/registries.d/xfce-custom.yaml
+install -Dm0644 /ctx/signing/registries.d/quay.io-toolbx-images.yaml /etc/containers/registries.d/quay.io-toolbx-images.yaml
+install -Dm0644 /ctx/cosign.pub /etc/pki/containers/cosign.pub
+install -Dm0644 /ctx/signing/quay.io-toolbx-images.pub /etc/pki/containers/quay.io-toolbx-images.pub
