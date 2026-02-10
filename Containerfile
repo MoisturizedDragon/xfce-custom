@@ -39,6 +39,8 @@ RUN dnf5 install -y \
     xdg-desktop-portal-gtk \
     xclip \
     firewalld \
+    flatpak \
+    zram-generator-defaults \
     --exclude=abrt-desktop \
     --exclude=dnfdragora-updater \
     --exclude=claws-mail \
