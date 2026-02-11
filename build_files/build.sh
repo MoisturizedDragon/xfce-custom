@@ -5,7 +5,7 @@ set -ouex pipefail
 ### Install packages
 
 # Packages can be installed from any enabled yum repo on the image.
-dnf5 install -y tmux rofi slock distrobox
+dnf5 install -y tmux rofi slock distrobox vim
 
 # VS Code from Microsoft repo
 tee /etc/yum.repos.d/vscode.repo <<'EOF'
