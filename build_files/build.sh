@@ -19,36 +19,9 @@ EOF
 sed -i "s/enabled=.*/enabled=0/g" /etc/yum.repos.d/vscode.repo
 dnf5 -y install --enablerepo=code code
 
-#### Docker CE
-
-# IP forwarding for Docker container networking
-install -Dm0644 /ctx/sysctl/docker-ce.conf /usr/lib/sysctl.d/docker-ce.conf
-sysctl -p
-
-# iptable_nat module for Docker-in-Docker (needed by Dev Containers)
-mkdir -p /etc/modules-load.d
-tee /etc/modules-load.d/ip_tables.conf <<EOF
-iptable_nat
-EOF
-
-dnf config-manager addrepo --from-repofile=https://download.docker.com/linux/fedora/docker-ce.repo
-sed -i "s/enabled=.*/enabled=0/g" /etc/yum.repos.d/docker-ce.repo
-dnf5 -y install --enablerepo=docker-ce-stable \
-    containerd.io \
-    docker-buildx-plugin \
-    docker-ce \
-    docker-ce-cli \
-    docker-compose-plugin
-
-# Docker group service (adds wheel users to docker group)
-install -Dm0755 /ctx/scripts/docker-groups /usr/bin/docker-groups
-install -Dm0644 /ctx/systemd/docker-groups.service /usr/lib/systemd/system/docker-groups.service
-
 #### Enable System Services
 
 systemctl enable podman.socket
-systemctl enable docker.socket
-systemctl enable docker-groups.service
 
 #### Configure Flathub
 
