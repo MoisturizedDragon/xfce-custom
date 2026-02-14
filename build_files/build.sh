@@ -19,9 +19,16 @@ EOF
 sed -i "s/enabled=.*/enabled=0/g" /etc/yum.repos.d/vscode.repo
 dnf5 -y install --enablerepo=code code
 
+#### VS Code default settings and first-login setup
+
+install -Dm0644 /ctx/skel/.config/Code/User/settings.json /etc/skel/.config/Code/User/settings.json
+install -Dm0755 /ctx/scripts/vscode-setup /usr/bin/vscode-setup
+install -Dm0644 /ctx/systemd/vscode-setup.service /usr/lib/systemd/user/vscode-setup.service
+
 #### Enable System Services
 
 systemctl enable podman.socket
+systemctl --global enable vscode-setup.service
 
 #### Configure Flathub
 

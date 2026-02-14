@@ -1,0 +1,10 @@
+[Unit]
+Description=VS Code first-login setup
+After=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/vscode-setup
+
+[Install]
+WantedBy=default.target

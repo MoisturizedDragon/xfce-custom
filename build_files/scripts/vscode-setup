@@ -1,0 +1,17 @@
+#!/usr/bin/bash
+
+SETUP_FILE="$HOME/.config/vscode-setup-done"
+
+if [ -f "$SETUP_FILE" ]; then
+    exit 0
+fi
+
+# Copy default settings if user doesn't have them
+if [ ! -f "$HOME/.config/Code/User/settings.json" ]; then
+    mkdir -p "$HOME/.config/Code/User"
+    cp /etc/skel/.config/Code/User/settings.json "$HOME/.config/Code/User/settings.json"
+fi
+
+code --install-extension ms-vscode-remote.remote-containers
+
+touch "$SETUP_FILE"
