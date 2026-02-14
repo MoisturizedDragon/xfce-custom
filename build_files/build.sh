@@ -28,6 +28,13 @@ systemctl enable podman.socket
 mkdir -p /etc/flatpak/remotes.d
 curl --retry 3 -Lo /etc/flatpak/remotes.d/flathub.flatpakrepo https://dl.flathub.org/repo/flathub.flatpakrepo
 
+#### Bootc update timer (fetch-only, no auto-reboot)
+
+install -Dm0644 /ctx/systemd/bootc-fetch.service /usr/lib/systemd/system/bootc-fetch.service
+install -Dm0644 /ctx/systemd/bootc-fetch.timer /usr/lib/systemd/system/bootc-fetch.timer
+systemctl mask bootc-fetch-apply-updates.timer
+systemctl enable bootc-fetch.timer
+
 #### Container image signature verification
 
 # Install cosign public key
