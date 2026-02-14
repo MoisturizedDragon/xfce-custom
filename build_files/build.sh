@@ -31,14 +31,7 @@ tee /etc/modules-load.d/ip_tables.conf <<EOF
 iptable_nat
 EOF
 
-tee /etc/yum.repos.d/docker-ce.repo <<'EOF'
-[docker-ce-stable]
-name=Docker CE Stable - $basearch
-baseurl=https://download.docker.com/linux/fedora/$releasever/$basearch/stable
-enabled=1
-gpgcheck=1
-gpgkey=https://download.docker.com/linux/fedora/gpg
-EOF
+dnf config-manager addrepo --from-repofile=https://download.docker.com/linux/fedora/docker-ce.repo
 sed -i "s/enabled=.*/enabled=0/g" /etc/yum.repos.d/docker-ce.repo
 dnf5 -y install --enablerepo=docker-ce-stable \
     containerd.io \
